@@ -14,7 +14,7 @@ DECLARE_DELEGATE_OneParam(FTransportErrorDelegate, FString&);
 
 // This class does not need to be modified.
 UINTERFACE(Blueprintable)
-class UTransport : public UInterface
+class SPECKLEUNREAL_API UTransport : public UInterface
 {
 	GENERATED_BODY()
 };

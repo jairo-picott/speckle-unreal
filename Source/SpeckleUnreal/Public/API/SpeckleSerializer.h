@@ -12,7 +12,7 @@ class ITransport;
 class FJsonObject;
 
 UCLASS()
-class USpeckleSerializer : public UBlueprintFunctionLibrary
+class SPECKLEUNREAL_API USpeckleSerializer : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
