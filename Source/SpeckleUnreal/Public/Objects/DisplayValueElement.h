@@ -27,6 +27,9 @@ public:
 	
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Speckle|Objects")
     TArray<UMesh*> DisplayValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Speckle|Objects")
+	TMap<FString, FString> Parameters;
 	
 	virtual bool Parse(const TSharedPtr<FJsonObject> Obj, const TScriptInterface<ITransport> ReadTransport) override;
 };

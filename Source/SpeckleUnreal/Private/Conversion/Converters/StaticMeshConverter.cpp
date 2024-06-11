@@ -19,6 +19,8 @@
 #include "Misc/Paths.h"
 #include "UObject/Package.h"
 #include "Materials/MaterialInterface.h"
+#include "Objects/DisplayValueElement.h"
+#include "SpeckleAssetUserData.h"
 
 #define LOCTEXT_NAMESPACE "FSpeckleUnrealModule"
 
@@ -156,6 +158,17 @@ AActor* UStaticMeshConverter::MeshesToNativeActor(const UBase* Parent, const TAr
 
 	if(Actor->HasValidRootComponent())
 		Actor->GetRootComponent()->SetMobility(ActorMobility);
+
+	if (IsValid(Actor))
+	{
+		const UDisplayValueElement* dve = Cast<UDisplayValueElement>(Parent);
+		if (dve && dve->Parameters.Num() > 0)
+		{
+			USpeckleAssetUserData* Aud = NewObject<USpeckleAssetUserData>();
+			Aud->Parameters = dve->Parameters;
+			MeshComponent->AddAssetUserData(Aud);
+		}
+	}
 	
 	return Actor;
 }
