@@ -49,61 +49,56 @@ bool UDisplayValueElement::Parse(const TSharedPtr<FJsonObject> Obj, const TScrip
 			DynamicProperties.Remove(Alias);
 		}
 
-		if (Obj && Obj->HasField(TEXT("parameters")))
+
+		//Modifications made by Jairo B. Picott to save Object Element in static meshes
+		for (const auto& value : Obj->Values)
 		{
-			const TSharedPtr<FJsonObject>* ParametersJson;
-			UE_LOG(LogTemp, Warning, TEXT("Here"));
-			if (Obj->TryGetObjectField(TEXT("parameters"), ParametersJson))
+			if (!(value.Value->Type == EJson::Object || value.Value->Type == EJson::Array))
 			{
-				for (const auto& Entry : ParametersJson->Get()->Values)
+				switch (value.Value->Type)
 				{
-					if (Entry.Value.IsValid() && Entry.Value->Type == EJson::Object)
+				case EJson::String:
+					Parameters.Add(value.Key, value.Value->AsString());
+					break;
+				case EJson::Boolean:
+					Parameters.Add(value.Key, value.Value->AsBool() ? TEXT("true") : TEXT("false"));
+					break;
+				case EJson::Number:
+					Parameters.Add(value.Key, FString::SanitizeFloat(value.Value->AsNumber()));
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (value.Key == TEXT("parameters"))
+			{
+				for (const auto& v : value.Value->AsObject()->Values)
+				{
+					if (v.Value->Type == EJson::Object)
 					{
-						TSharedPtr<FJsonObject> FieldObj = Entry.Value->AsObject();
-						FString Name;
-						FieldObj->TryGetStringField(TEXT("name"), Name);
-						Name.ReplaceInline(TEXT(" "), TEXT("")); //Remove Spaces in the paramters' names
+						FString vName;
+						v.Value->AsObject()->TryGetStringField(TEXT("name"), vName);
 
-						if (FieldObj->HasField(TEXT("value")))
+						if (Parameters.Contains(vName)) { continue; }
+
+						TSharedPtr<FJsonValue> vField = v.Value->AsObject()->TryGetField("value");
+
+						switch (vField->Type)
 						{
-							TSharedPtr<FJsonValue> ValueField = FieldObj->TryGetField(TEXT("value"));
-							if (ValueField.IsValid())
-							{
-								FString ParameterLine;
-								if (ValueField->Type == EJson::String)
-								{
-									FString Value;
-									if (FieldObj->TryGetStringField("value", Value))
-									{
-										ParameterLine = FString::Printf(TEXT("%s.%s"), *Name, *Value);
-										Parameters.Add(Name, Value);
-									}
-								}
-								else if (ValueField->Type == EJson::Number)
-								{
-									float FieldValueNumber;
-									if (ValueField->TryGetNumber(FieldValueNumber))
-									{
-										FString Value = FString::SanitizeFloat(FieldValueNumber);
-										Parameters.Add(Name, Value);
-									}
-								}
-								else if (ValueField->Type == EJson::Boolean)
-								{
-									bool bFieldValueBool;
-									if (ValueField->TryGetBool(bFieldValueBool))
-									{
-										FString ValueBool = bFieldValueBool ? TEXT("true") : TEXT("false");
-										Parameters.Add(Name, ValueBool);
-									}
-
-								}
-							}
+						case EJson::String:
+							Parameters.Add(vName, vField->AsString());
+							break;
+						case EJson::Boolean:
+							Parameters.Add(vName, vField->AsBool() ? TEXT("true") : TEXT("false"));
+						case EJson::Number:
+							Parameters.Add(vName, FString::SanitizeFloat(vField->AsNumber()));
+						default:
+							break;
 						}
 					}
 				}
 			}
-		
 		}
 		
 	}
