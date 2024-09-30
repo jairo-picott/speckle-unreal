@@ -159,6 +159,9 @@ AActor* UStaticMeshConverter::MeshesToNativeActor(const UBase* Parent, const TAr
 	if(Actor->HasValidRootComponent())
 		Actor->GetRootComponent()->SetMobility(ActorMobility);
 
+	// start @jairo-picott (GitHub)
+	// Added by Jairo B. Picott
+	// To try to collect from the UInstance the parameters mapped if URevitInstance	
 	if (IsValid(Actor))
 	{
 		const UDisplayValueElement* dve = Cast<UDisplayValueElement>(Parent);
@@ -169,7 +172,8 @@ AActor* UStaticMeshConverter::MeshesToNativeActor(const UBase* Parent, const TAr
 			MeshComponent->AddAssetUserData(Aud);
 		}
 	}
-	
+	// end @jairo-picott (GitHub)
+
 	return Actor;
 }
 

@@ -13,6 +13,11 @@
 #include "Objects/Utils/SpeckleObjectUtils.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Dom/JsonValue.h"
+// start @jairo-picott (GitHub)
+// Added by Jairo B. Picott
+#include "SpeckleAssetUserData.h"
+#include "Engine/StaticMeshActor.h"
+// end @jairo-picott (GitHub)
 
 #define LOCTEXT_NAMESPACE "FSpeckleUnrealModule"
 
@@ -168,6 +173,16 @@ void USpeckleConverterComponent::AttachConvertedToOwner(AActor* AOwner, const UB
 		
 			NativeActor->AttachToActor(AOwner, FAttachmentTransformRules::KeepRelativeTransform);
 			NativeActor->SetOwner(AOwner);
+
+			// start @jairo-picott (GitHub)
+			// Added by Jairo B. Picott
+			// To pass the parameter from the Actor parent to the StaticMeshActor child if the case
+
+			AStaticMeshActor* SmNativeActor = Cast<AStaticMeshActor>(NativeActor);
+			USpeckleAssetUserData::CopyMissingParameters(SmNativeActor, AOwner);
+
+			// end @jairo-picott (GitHub)
+
 			return;
 		}
 	}

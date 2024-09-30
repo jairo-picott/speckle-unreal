@@ -12,6 +12,10 @@ DECLARE_DELEGATE_OneParam(FTransportErrorDelegate, FString&);
 //DECLARE_DELEGATE_OneParam(FTransportTotalChildrenCountKnownDelegate, int32);
 //DECLARE_DELEGATE_OneParam(FTransportProgressDelegate, int32);
 
+// start @jairo-picott (GitHub)
+// Added by Jairo B. Picott
+// Make it available in SPECKLEUNREAL_API
+
 // This class does not need to be modified.
 UINTERFACE(Blueprintable)
 class SPECKLEUNREAL_API UTransport : public UInterface

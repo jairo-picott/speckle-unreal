@@ -5,6 +5,7 @@
 #include "Objects/Utils/SpeckleObjectUtils.h"
 #include "Engine/World.h"
 #include "Objects/Other/RevitInstance.h"
+#include "SpeckleAssetUserData.h"
 
 UBlockConverter::UBlockConverter()
 {
@@ -26,6 +27,29 @@ UObject* UBlockConverter::ConvertToNative_Implementation(const UBase* SpeckleBas
 AActor* UBlockConverter::BlockToNative(const UInstance* Block, UWorld* World)
 {
 	AActor* BlockActor = CreateEmptyActor(World, USpeckleObjectUtils::CreateTransform(Block->Transform));
+
+	// start @jairo-picott (GitHub)
+	// Added by Jairo B. Picott
+	// To try to collect from the UInstance the parameters mapped if URevitInstance	
+	if (BlockActor)
+	{
+		const URevitInstance* ri = Cast<URevitInstance>(Block);
+		if (ri && ri->Parameters.Num() > 0)
+		{
+			USpeckleAssetUserData* Aud = NewObject<USpeckleAssetUserData>();
+			Aud->Parameters = ri->Parameters;
+			UActorComponent* FoundComponent = nullptr;
+			for (UActorComponent* Component : BlockActor->GetComponents())
+			{
+				if (Component->GetName() == TEXT("UserDataComponent"))
+				{
+					Component->AddAssetUserData(Aud);
+				}
+			}
+		}
+	}
+	// end @jairo-picott (GitHub)
+
 	//Return the block actor as is,
 	//Other converter logic will convert child geometries because UBlockInstance intentionally left them as dynamic properties
 	return BlockActor;
@@ -45,6 +69,16 @@ AActor* UBlockConverter::CreateEmptyActor(UWorld* World, const FTransform& Trans
 	USceneComponent* RootComponent = Actor->GetRootComponent();
 	
 	RootComponent->SetMobility(ActorMobility);
+
+	// start @jairo-picott (GitHub)
+	// Added by Jairo B. Picott
+	// Create a custom component to Hold AssetUserData
+	// Where the parameters will be saved
+	TObjectPtr<UActorComponent> UserDataComponent = NewObject<UActorComponent>(Actor, UActorComponent::StaticClass());
+	UserDataComponent->RegisterComponent();
+	Actor->AddInstanceComponent(UserDataComponent);
+	UserDataComponent->Rename(TEXT("UserDataComponent"));
+	// end @jairo-picott (GitHub)
 	
 	return Actor;
 }

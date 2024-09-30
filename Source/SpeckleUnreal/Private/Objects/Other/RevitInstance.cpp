@@ -65,6 +65,60 @@ bool URevitInstance::Parse(const TSharedPtr<FJsonObject> Obj,  const TScriptInte
 	}
 	DynamicProperties.Remove(TEXT("geometry"));
 	
+	// start @jairo-picott (GitHub)
+	// Added by Jairo B. Picott
+	// To save Object Element in RevitInstance Elements
+	for (const auto& value : Obj->Values)
+	{
+		if (!(value.Value->Type == EJson::Object || value.Value->Type == EJson::Array))
+		{
+			switch (value.Value->Type)
+			{
+			case EJson::String:
+				Parameters.Add(value.Key, value.Value->AsString());
+				break;
+			case EJson::Boolean:
+				Parameters.Add(value.Key, value.Value->AsBool() ? TEXT("true") : TEXT("false"));
+				break;
+			case EJson::Number:
+				Parameters.Add(value.Key, FString::SanitizeFloat(value.Value->AsNumber()));
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (value.Key == TEXT("parameters"))
+		{
+			for (const auto& v : value.Value->AsObject()->Values)
+			{
+				if (v.Value->Type == EJson::Object)
+				{
+					FString vName;
+					v.Value->AsObject()->TryGetStringField(TEXT("name"), vName);
+
+					if (Parameters.Contains(vName)) { continue; }
+
+					TSharedPtr<FJsonValue> vField = v.Value->AsObject()->TryGetField("value");
+
+					switch (vField->Type)
+					{
+					case EJson::String:
+						Parameters.Add(vName, vField->AsString());
+						break;
+					case EJson::Boolean:
+						Parameters.Add(vName, vField->AsBool() ? TEXT("true") : TEXT("false"));
+					case EJson::Number:
+						Parameters.Add(vName, FString::SanitizeFloat(vField->AsNumber()));
+					default:
+						break;
+					}
+				}
+			}
+		}
+	}
+	// end @jairo-picott (GitHub)
+
 	// Intentionally don't remove blockDefinition from dynamic properties,
 	// because we want the converter to create the child geometries for us
 	//DynamicProperties.Remove("blockDefinition");

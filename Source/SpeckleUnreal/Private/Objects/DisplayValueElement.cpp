@@ -49,8 +49,9 @@ bool UDisplayValueElement::Parse(const TSharedPtr<FJsonObject> Obj, const TScrip
 			DynamicProperties.Remove(Alias);
 		}
 
-
-		//Modifications made by Jairo B. Picott to save Object Element in static meshes
+		// start @jairo-picott (GitHub)
+		// Added by Jairo B. Picott
+		// To save Object Element in static meshes
 		for (const auto& value : Obj->Values)
 		{
 			if (!(value.Value->Type == EJson::Object || value.Value->Type == EJson::Array))
@@ -100,6 +101,7 @@ bool UDisplayValueElement::Parse(const TSharedPtr<FJsonObject> Obj, const TScrip
 				}
 			}
 		}
+		// end @jairo-picott (GitHub)
 		
 	}
 

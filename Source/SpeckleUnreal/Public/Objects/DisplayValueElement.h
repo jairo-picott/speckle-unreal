@@ -28,8 +28,15 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Speckle|Objects")
     TArray<UMesh*> DisplayValue;
 
+
+	// start @jairo-picott (GitHub)
+	// Added by Jairo B. Picott
+	/// <summary>
+	/// Map to save the parameters of RevitInstance elements
+	/// </summary>
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Speckle|Objects")
 	TMap<FString, FString> Parameters;
+	// end @jairo-picott (GitHub)
 	
 	virtual bool Parse(const TSharedPtr<FJsonObject> Obj, const TScriptInterface<ITransport> ReadTransport) override;
 };

@@ -74,7 +74,9 @@ void UReceiveOperation::HandleReceive(TSharedPtr<FJsonObject> Object)
 	{
 		UBase* Res = USpeckleSerializer::DeserializeBase(Object, LocalTransport);
 
-		//Sends the JsonObject as String.
+		// start @jairo-picott (GitHub)
+		// Added by Jairo B. Picott
+		// Sends the JsonObject as String.
 		FString ObjectString;
 		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&ObjectString);
 		FJsonSerializer::Serialize(Object.ToSharedRef(), Writer);
@@ -83,6 +85,7 @@ void UReceiveOperation::HandleReceive(TSharedPtr<FJsonObject> Object)
 			OnReceiveSuccessfully.Broadcast(Res, ObjectString);
 		else
 			OnError.Broadcast(nullptr, FString::Printf(TEXT("Root Speckle Object %s failed to deserialize"), *ObjectId));
+		// end @jairo-picott (GitHub)
 	}
 		
 	

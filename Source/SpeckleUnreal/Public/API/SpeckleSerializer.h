@@ -11,6 +11,10 @@ class UBase;
 class ITransport;
 class FJsonObject;
 
+// start @jairo-picott (GitHub)
+// Added by Jairo B. Picott
+// Make it available in SPECKLEUNREAL_API
+
 UCLASS()
 class SPECKLEUNREAL_API USpeckleSerializer : public UBlueprintFunctionLibrary
 {
