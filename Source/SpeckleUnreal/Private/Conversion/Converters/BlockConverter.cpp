@@ -74,7 +74,7 @@ AActor* UBlockConverter::CreateEmptyActor(UWorld* World, const FTransform& Trans
 	// Added by Jairo B. Picott
 	// Create a custom component to Hold AssetUserData
 	// Where the parameters will be saved
-	TObjectPtr<UActorComponent> UserDataComponent = NewObject<UActorComponent>(Actor, UActorComponent::StaticClass());
+	TObjectPtr<USceneComponent> UserDataComponent = NewObject<USceneComponent>(Actor, USceneComponent::StaticClass());
 	UserDataComponent->RegisterComponent();
 	Actor->AddInstanceComponent(UserDataComponent);
 	UserDataComponent->Rename(TEXT("UserDataComponent"));
