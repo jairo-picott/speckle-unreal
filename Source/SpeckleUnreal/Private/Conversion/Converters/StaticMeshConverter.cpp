@@ -122,7 +122,7 @@ AActor* UStaticMeshConverter::MeshesToNativeActor(const UBase* Parent, const TAr
 		MeshComponent->RegisterComponent();
 	}
 
-	MeshComponent->SetStaticMesh(Mesh);
+	MeshComponent->SetStaticMesh(Mesh);	
 
 	for(const FString& t: HiddenTypes)
 	{
@@ -172,6 +172,7 @@ AActor* UStaticMeshConverter::MeshesToNativeActor(const UBase* Parent, const TAr
 			MeshComponent->AddAssetUserData(Aud);
 		}
 	}
+	Mesh->bAllowCPUAccess = true;
 	// end @jairo-picott (GitHub)
 
 	return Actor;
